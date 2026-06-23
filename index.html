@@ -21,7 +21,9 @@
             box-sizing: border-box;
         }
 
+        /* ----- THEME VARIABLES (default dark) ----- */
         :root {
+            /* Dark theme (default) */
             --bg-primary: #0b0b0b;
             --bg-secondary: #141414;
             --bg-card: #1e1e1e;
@@ -33,11 +35,38 @@
             --accent-dim: #a8893a;
             --accent-glow: rgba(201, 168, 76, 0.15);
             --border-subtle: #2a2a2a;
-            --radius: 12px;
             --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-            --transition: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --nav-bg: rgba(11, 11, 11, 0.75);
+            --hero-gradient-1: rgba(201, 168, 76, 0.06);
+            --hero-gradient-2: rgba(201, 168, 76, 0.04);
+            --footer-border: #2a2a2a;
+            --input-bg: #0b0b0b;
+            --placeholder-color: #777777;
         }
 
+        /* Light theme */
+        body.light-theme {
+            --bg-primary: #f6f6f6;
+            --bg-secondary: #ececec;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f0f0f0;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a4a4a;
+            --text-muted: #888888;
+            --accent: #b8942e;
+            --accent-dim: #9c7a26;
+            --accent-glow: rgba(184, 148, 46, 0.15);
+            --border-subtle: #d0d0d0;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+            --nav-bg: rgba(246, 246, 246, 0.80);
+            --hero-gradient-1: rgba(184, 148, 46, 0.08);
+            --hero-gradient-2: rgba(184, 148, 46, 0.05);
+            --footer-border: #d0d0d0;
+            --input-bg: #f6f6f6;
+            --placeholder-color: #aaaaaa;
+        }
+
+        /* smooth transitions for all themed properties */
         html {
             scroll-behavior: smooth;
         }
@@ -47,7 +76,15 @@
             background: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.6;
+            transition: background 0.4s ease, color 0.4s ease;
             overflow-x: hidden;
+        }
+
+        /* all elements that change with theme */
+        *,
+        *::before,
+        *::after {
+            transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, fill 0.4s ease;
         }
 
         a {
@@ -115,7 +152,6 @@
             transform: scale(1);
         }
 
-        /* delay helpers */
         .delay-1 {
             transition-delay: 0.10s;
         }
@@ -138,7 +174,7 @@
             font-size: 0.95rem;
             letter-spacing: 0.3px;
             cursor: pointer;
-            transition: var(--transition);
+            transition: var(--transition), background 0.4s, color 0.4s, border 0.4s, box-shadow 0.4s;
             border: none;
             background: var(--accent);
             color: #0b0b0b;
@@ -170,10 +206,13 @@
             width: 100%;
             padding: 16px 0;
             z-index: 1000;
-            background: rgba(11, 11, 11, 0.75);
+            background: var(--nav-bg);
             backdrop-filter: blur(14px) saturate(1.2);
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            transition: var(--transition);
+            transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+        body.light-theme nav {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
         nav .container {
             display: flex;
@@ -196,6 +235,12 @@
             color: var(--accent);
         }
 
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
         .nav-links {
             display: flex;
             gap: 28px;
@@ -205,7 +250,7 @@
         }
         .nav-links a {
             color: var(--text-secondary);
-            transition: var(--transition);
+            transition: color 0.3s ease;
             position: relative;
         }
         .nav-links a::after {
@@ -216,13 +261,46 @@
             width: 0;
             height: 2px;
             background: var(--accent);
-            transition: var(--transition);
+            transition: width 0.3s ease;
         }
         .nav-links a:hover {
             color: var(--text-primary);
         }
         .nav-links a:hover::after {
             width: 100%;
+        }
+
+        /* Theme Toggle Button */
+        #theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 30px;
+            transition: background 0.3s, color 0.3s, transform 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            padding: 6px 12px;
+        }
+        #theme-toggle:hover {
+            background: var(--bg-card-hover);
+            color: var(--accent);
+            transform: scale(1.05);
+        }
+        #theme-toggle i {
+            font-size: 1.1rem;
+        }
+        #theme-toggle .toggle-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            color: var(--text-muted);
+            margin-left: 4px;
         }
 
         .nav-hamburger {
@@ -240,7 +318,7 @@
             height: 2.5px;
             background: var(--text-primary);
             border-radius: 4px;
-            transition: var(--transition);
+            transition: background 0.3s ease;
         }
 
         /* mobile nav */
@@ -258,6 +336,16 @@
             gap: 16px;
             box-shadow: var(--shadow);
         }
+        .nav-links.open .nav-theme-mobile {
+            display: flex;
+            justify-content: center;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 16px;
+            margin-top: 8px;
+        }
+        .nav-theme-mobile {
+            display: none;
+        }
 
         /* ----- HERO ----- */
         #hero {
@@ -266,8 +354,8 @@
             align-items: center;
             position: relative;
             padding: 120px 0 80px;
-            background: radial-gradient(ellipse at 30% 40%, rgba(201, 168, 76, 0.06) 0%, transparent 65%),
-                radial-gradient(ellipse at 70% 80%, rgba(201, 168, 76, 0.04) 0%, transparent 55%),
+            background: radial-gradient(ellipse at 30% 40%, var(--hero-gradient-1) 0%, transparent 65%),
+                radial-gradient(ellipse at 70% 80%, var(--hero-gradient-2) 0%, transparent 55%),
                 var(--bg-primary);
             overflow: hidden;
         }
@@ -329,7 +417,7 @@
             color: var(--text-muted);
             font-size: 0.9rem;
             gap: 14px;
-            transition: var(--transition);
+            transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
             box-shadow: var(--shadow);
         }
         .hero-placeholder i {
@@ -377,7 +465,6 @@
             margin: 0 auto;
         }
 
-        /* divider */
         .section-divider {
             width: 60px;
             height: 3px;
@@ -419,7 +506,7 @@
             border-radius: var(--radius);
             text-align: center;
             border: 1px solid var(--border-subtle);
-            transition: var(--transition);
+            transition: background 0.4s, border-color 0.4s, transform 0.3s;
         }
         .stat-item:hover {
             border-color: var(--accent);
@@ -449,7 +536,7 @@
             justify-content: center;
             color: var(--text-muted);
             gap: 14px;
-            transition: var(--transition);
+            transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
             box-shadow: var(--shadow);
         }
         .about-placeholder i {
@@ -474,7 +561,7 @@
             border-radius: var(--radius);
             padding: 32px 24px;
             border: 1px solid var(--border-subtle);
-            transition: var(--transition);
+            transition: background 0.4s, border-color 0.4s, transform 0.3s, box-shadow 0.4s;
             text-align: center;
         }
         .service-card:hover {
@@ -517,7 +604,7 @@
             justify-content: center;
             color: var(--text-muted);
             gap: 12px;
-            transition: var(--transition);
+            transition: background 0.4s, border-color 0.4s, transform 0.3s, box-shadow 0.4s;
             cursor: pointer;
             overflow: hidden;
             position: relative;
@@ -525,7 +612,7 @@
         .gallery-item i {
             font-size: 3rem;
             opacity: 0.3;
-            transition: var(--transition);
+            transition: opacity 0.3s, color 0.3s;
         }
         .gallery-item span {
             font-size: 0.8rem;
@@ -540,7 +627,6 @@
             opacity: 0.6;
             color: var(--accent);
         }
-        /* dummy image placeholder overlay */
         .gallery-item .dummy-label {
             position: absolute;
             bottom: 16px;
@@ -611,7 +697,7 @@
             background: var(--bg-card);
             border-radius: var(--radius);
             border: 1px solid var(--border-subtle);
-            transition: var(--transition);
+            transition: background 0.4s, border-color 0.4s;
         }
         .contact-item:hover {
             border-color: var(--accent);
@@ -658,7 +744,7 @@
             justify-content: center;
             color: var(--text-secondary);
             font-size: 1.2rem;
-            transition: var(--transition);
+            transition: background 0.4s, border-color 0.4s, color 0.4s, transform 0.3s;
         }
         .contact-social a:hover {
             border-color: var(--accent);
@@ -678,13 +764,13 @@
         }
         .contact-form-placeholder .field {
             padding: 14px 18px;
-            background: var(--bg-primary);
+            background: var(--input-bg);
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
             color: var(--text-primary);
             font-family: inherit;
             font-size: 0.95rem;
-            transition: var(--transition);
+            transition: border-color 0.3s, box-shadow 0.3s, background 0.4s;
         }
         .contact-form-placeholder .field:focus {
             outline: none;
@@ -692,7 +778,7 @@
             box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.10);
         }
         .contact-form-placeholder .field::placeholder {
-            color: var(--text-muted);
+            color: var(--placeholder-color);
         }
         .contact-form-placeholder textarea.field {
             resize: vertical;
@@ -702,7 +788,7 @@
         /* ----- FOOTER ----- */
         footer {
             padding: 40px 0 28px;
-            border-top: 1px solid var(--border-subtle);
+            border-top: 1px solid var(--footer-border);
             background: var(--bg-primary);
         }
         footer .container {
@@ -774,6 +860,37 @@
             .nav-hamburger {
                 display: flex;
             }
+            .nav-right {
+                gap: 12px;
+            }
+            #theme-toggle .toggle-label {
+                display: none;
+            }
+            .nav-theme-mobile {
+                display: flex !important;
+                justify-content: center;
+                border-top: 1px solid var(--border-subtle);
+                padding-top: 16px;
+                margin-top: 8px;
+            }
+            .nav-theme-mobile #theme-toggle-mobile {
+                background: none;
+                border: none;
+                color: var(--text-secondary);
+                font-size: 1.1rem;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                border-radius: 30px;
+                background: var(--bg-card);
+                border: 1px solid var(--border-subtle);
+            }
+            .nav-theme-mobile #theme-toggle-mobile:hover {
+                background: var(--bg-card-hover);
+                color: var(--accent);
+            }
 
             .hero-content h1 {
                 font-size: 2.2rem;
@@ -836,6 +953,9 @@
             .contact-form-placeholder {
                 padding: 20px;
             }
+            #theme-toggle .toggle-label {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -848,17 +968,27 @@
                 <i class="fas fa-bullseye"></i>
                 Archery <span>Lapangan Banteng</span>
             </div>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#hero">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#services">Programs</a></li>
-                <li><a href="#gallery">Gallery</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            <button class="nav-hamburger" id="hamburger" aria-label="Toggle navigation">
-                <span></span><span></span><span></span>
-            </button>
+            <div class="nav-right">
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#hero">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#services">Programs</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <!-- mobile theme toggle will appear inside dropdown -->
+                </ul>
+                <!-- Theme Toggle (desktop) -->
+                <button id="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                    <span class="toggle-label">Theme</span>
+                </button>
+                <button class="nav-hamburger" id="hamburger" aria-label="Toggle navigation">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+            <!-- Mobile theme toggle (hidden by default, shown inside dropdown) -->
         </div>
+        <!-- Mobile theme toggle inside dropdown (will be cloned) -->
     </nav>
 
     <!-- ====== HERO ====== -->
@@ -983,7 +1113,6 @@
                 <p class="section-subtitle">A glimpse into the life of our archery family.</p>
             </div>
             <div class="gallery-grid">
-                <!-- 6 dummy gallery items -->
                 <div class="gallery-item reveal delay-1">
                     <i class="fas fa-image"></i>
                     <span>Photo 1</span>
@@ -1044,7 +1173,6 @@
                 <p class="section-subtitle">We'd love to hear from you. Drop by, call, or send us a message.</p>
             </div>
             <div class="contact-grid">
-                <!-- left: contact info -->
                 <div class="contact-info-list reveal-left">
                     <div class="contact-item">
                         <div class="icon"><i class="fas fa-map-pin"></i></div>
@@ -1082,19 +1210,18 @@
                     </div>
                 </div>
 
-                <!-- right: form placeholder -->
                 <div class="reveal-right">
                     <div class="contact-form-placeholder">
-                        <div class="field" style="padding:14px 18px;background:var(--bg-primary);border:1px solid var(--border-subtle);border-radius:8px;color:var(--text-primary);">
+                        <div class="field" style="padding:14px 18px;background:var(--input-bg);border:1px solid var(--border-subtle);border-radius:8px;color:var(--text-primary);">
                             <i class="fas fa-user" style="margin-right:10px;color:var(--text-muted);"></i> Your Name
                         </div>
-                        <div class="field" style="padding:14px 18px;background:var(--bg-primary);border:1px solid var(--border-subtle);border-radius:8px;color:var(--text-primary);">
+                        <div class="field" style="padding:14px 18px;background:var(--input-bg);border:1px solid var(--border-subtle);border-radius:8px;color:var(--text-primary);">
                             <i class="fas fa-envelope" style="margin-right:10px;color:var(--text-muted);"></i> Your Email
                         </div>
-                        <div class="field" style="padding:14px 18px;background:var(--bg-primary);border:1px solid var(--border-subtle);border-radius:8px;color:var(--text-primary);">
+                        <div class="field" style="padding:14px 18px;background:var(--input-bg);border:1px solid var(--border-subtle);border-radius:8px;color:var(--text-primary);">
                             <i class="fas fa-pencil-alt" style="margin-right:10px;color:var(--text-muted);"></i> Subject
                         </div>
-                        <textarea class="field" placeholder="Your message…" style="font-family:inherit;padding:14px 18px;background:var(--bg-primary);border:1px solid var(--border-subtle);border-radius:8px;color:var(--text-primary);min-height:120px;resize:vertical;"></textarea>
+                        <textarea class="field" placeholder="Your message…" style="font-family:inherit;padding:14px 18px;background:var(--input-bg);border:1px solid var(--border-subtle);border-radius:8px;color:var(--text-primary);min-height:120px;resize:vertical;"></textarea>
                         <button class="btn" style="width:100%;justify-content:center;display:flex;align-items:center;gap:8px;">
                             <i class="fas fa-paper-plane"></i> Send Message
                         </button>
@@ -1116,9 +1243,9 @@
             </div>
             <p>&copy; 2026 — Built with <i class="fas fa-heart" style="color:var(--accent);"></i> in Jakarta</p>
             <p style="font-size:0.8rem;">
-                <a href="#" style="color:var(--text-muted);transition:var(--transition);">Privacy</a>
+                <a href="#" style="color:var(--text-muted);transition:color 0.3s;">Privacy</a>
                 &middot;
-                <a href="#" style="color:var(--text-muted);transition:var(--transition);">Terms</a>
+                <a href="#" style="color:var(--text-muted);transition:color 0.3s;">Terms</a>
             </p>
         </div>
     </footer>
@@ -1128,9 +1255,70 @@
         (function() {
             'use strict';
 
+            // ---- THEME TOGGLE ----
+            const themeToggle = document.getElementById('theme-toggle');
+            const body = document.body;
+            const icon = themeToggle.querySelector('i');
+
+            // Check localStorage
+            let currentTheme = localStorage.getItem('theme') || 'dark';
+            if (currentTheme === 'light') {
+                body.classList.add('light-theme');
+                icon.className = 'fas fa-sun';
+            } else {
+                icon.className = 'fas fa-moon';
+            }
+
+            function toggleTheme() {
+                const isLight = body.classList.toggle('light-theme');
+                const newTheme = isLight ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+                // update icon
+                if (isLight) {
+                    icon.className = 'fas fa-sun';
+                } else {
+                    icon.className = 'fas fa-moon';
+                }
+                // also update mobile toggle if exists
+                const mobileToggle = document.getElementById('theme-toggle-mobile');
+                if (mobileToggle) {
+                    const mobileIcon = mobileToggle.querySelector('i');
+                    if (mobileIcon) {
+                        mobileIcon.className = isLight ? 'fas fa-sun' : 'fas fa-moon';
+                    }
+                }
+            }
+
+            themeToggle.addEventListener('click', toggleTheme);
+
             // ---- HAMBURGER TOGGLE ----
             const hamburger = document.getElementById('hamburger');
             const navLinks = document.getElementById('navLinks');
+
+            // Add mobile theme toggle inside dropdown if not already
+            function addMobileThemeToggle() {
+                // check if already exists
+                if (document.getElementById('theme-toggle-mobile')) return;
+                const li = document.createElement('li');
+                li.className = 'nav-theme-mobile';
+                li.innerHTML = `
+                    <button id="theme-toggle-mobile" aria-label="Toggle theme">
+                        <i class="${body.classList.contains('light-theme') ? 'fas fa-sun' : 'fas fa-moon'}"></i>
+                        <span>Toggle Theme</span>
+                    </button>
+                `;
+                navLinks.appendChild(li);
+                // add event listener
+                const mobileBtn = document.getElementById('theme-toggle-mobile');
+                if (mobileBtn) {
+                    mobileBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        toggleTheme();
+                        // close nav after toggle? maybe not
+                    });
+                }
+            }
+            addMobileThemeToggle();
 
             hamburger.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -1138,7 +1326,7 @@
             });
 
             // close nav on link click (mobile)
-            document.querySelectorAll('.nav-links a').forEach(link => {
+            document.querySelectorAll('.nav-links a:not(.nav-theme-mobile)').forEach(link => {
                 link.addEventListener('click', function() {
                     navLinks.classList.remove('open');
                 });
@@ -1182,6 +1370,34 @@
                 }
                 lastScroll = currentScroll;
             });
+            // adjust for light theme
+            function updateNavBorder() {
+                if (body.classList.contains('light-theme')) {
+                    navbar.style.borderBottomColor = 'rgba(0,0,0,0.06)';
+                } else {
+                    navbar.style.borderBottomColor = 'rgba(255,255,255,0.04)';
+                }
+            }
+            // call initially and on theme change
+            updateNavBorder();
+            // observe theme changes via mutation? we can just call after toggle
+            const origToggle = toggleTheme;
+            toggleTheme = function() {
+                origToggle();
+                updateNavBorder();
+            };
+            // re-bind the click to use new toggle
+            themeToggle.removeEventListener('click', origToggle);
+            themeToggle.addEventListener('click', toggleTheme);
+            // also mobile
+            const mobileToggleBtn = document.getElementById('theme-toggle-mobile');
+            if (mobileToggleBtn) {
+                mobileToggleBtn.removeEventListener('click', toggleTheme);
+                mobileToggleBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    toggleTheme();
+                });
+            }
 
             // ---- SMOOTH SCROLL FOR NAV LINKS (enhance) ----
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -1203,13 +1419,11 @@
             // ---- GALLERY ITEM CLICK (dummy feedback) ----
             document.querySelectorAll('.gallery-item').forEach(item => {
                 item.addEventListener('click', function() {
-                    // subtle haptic-like feedback
                     this.style.transition = 'transform 0.1s ease';
                     this.style.transform = 'scale(0.96)';
                     setTimeout(() => {
                         this.style.transform = 'scale(1)';
                     }, 120);
-                    // console placeholder
                     console.log('🔲 Gallery placeholder clicked — replace with your image.');
                 });
             });
@@ -1231,7 +1445,7 @@
                 }
             });
 
-            console.log('🏹 Archery Lapangan Banteng — ready for your content!');
+            console.log('🏹 Archery Lapangan Banteng — theme toggle ready!');
         })();
     </script>
 
