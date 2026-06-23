@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
     <style>
         /* ----- RESET & BASE ----- */
         *,
@@ -975,6 +977,9 @@
                             <input type="text" name="subject" class="field" placeholder="Subject" required>
                             <textarea name="message" class="field" placeholder="Your message…" style="font-family:inherit;min-height:120px;resize:vertical;" required></textarea>
                             
+                            <!-- reCAPTCHA Widget -->
+                            <div class="g-recaptcha" data-sitekey="6LexMC8tAAAAAE0vjszjWqTci77HEtVIdE8YlGNm" style="margin: 8px 0;"></div>
+                            
                             <button type="submit" class="btn" style="width:100%;justify-content:center;display:flex;align-items:center;gap:8px;">
                                 <i class="fas fa-paper-plane"></i> Send Message
                             </button>
@@ -984,7 +989,7 @@
                         <div id="formStatus" style="display:none; text-align:center; padding:16px; margin-top:12px; border-radius:8px; font-weight:600;"></div>
                         
                         <p style="font-size:0.75rem;color:var(--text-muted);text-align:center;margin-top:12px;">
-                            <i class="fas fa-info-circle"></i> Your data is saved securely via Google Apps Script.
+                            <i class="fas fa-info-circle"></i> Your data is submitted.
                         </p>
                     </div>
                 </div>
@@ -1148,7 +1153,7 @@
             });
 
             // ============================================================
-            // 7. CONTACT FORM → Google Apps Script
+            // 7. CONTACT FORM → Google Apps Script (WITH CAPTCHA)
             // ============================================================
             const form = document.getElementById('contactForm');
             const statusDiv = document.getElementById('formStatus');
@@ -1160,14 +1165,29 @@
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
 
+                    // --- 1. CHECK CAPTCHA ---
+                    const captchaResponse = grecaptcha.getResponse();
+                    if (!captchaResponse) {
+                        statusDiv.style.display = 'block';
+                        statusDiv.style.background = 'rgba(255, 80, 80, 0.15)';
+                        statusDiv.style.color = '#ff5555';
+                        statusDiv.innerHTML = '<i class="fas fa-exclamation-circle" style="margin-right:8px;"></i> Please complete the "I\'m not a robot" verification.';
+                        return;
+                    }
+
+                    // --- 2. PREPARE SUBMISSION ---
                     const submitBtn = form.querySelector('button[type="submit"]');
                     const originalText = submitBtn.innerHTML;
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending…';
                     submitBtn.disabled = true;
 
                     const formData = new FormData(form);
+                    // Append the captcha token
+                    formData.append('g-recaptcha-response', captchaResponse);
+
                     const urlEncoded = new URLSearchParams(formData).toString();
 
+                    // --- 3. SEND TO APPS SCRIPT ---
                     fetch(WEB_APP_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -1179,6 +1199,9 @@
                         submitBtn.disabled = false;
 
                         if (data.success) {
+                            // Reset captcha widget
+                            grecaptcha.reset();
+
                             statusDiv.style.display = 'block';
                             statusDiv.style.background = 'rgba(201, 168, 76, 0.15)';
                             statusDiv.style.color = 'var(--accent)';
@@ -1188,6 +1211,7 @@
                                 statusDiv.style.display = 'none';
                             }, 6000);
                         } else {
+                            grecaptcha.reset(); // Reset captcha on error too
                             statusDiv.style.display = 'block';
                             statusDiv.style.background = 'rgba(255, 80, 80, 0.15)';
                             statusDiv.style.color = '#ff5555';
@@ -1197,6 +1221,7 @@
                     .catch(error => {
                         submitBtn.innerHTML = originalText;
                         submitBtn.disabled = false;
+                        grecaptcha.reset();
                         statusDiv.style.display = 'block';
                         statusDiv.style.background = 'rgba(255, 80, 80, 0.15)';
                         statusDiv.style.color = '#ff5555';
@@ -1205,7 +1230,6 @@
                     });
                 });
             }
-
             // ============================================================
             // 8. ESC key closes nav
             // ============================================================
