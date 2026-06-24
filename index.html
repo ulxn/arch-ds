@@ -662,8 +662,8 @@
         }
 
         /* ============================================================
-                   REFINED CONTACT SECTION – More impressive & accessible
-                   ============================================================ */
+        REFINED CONTACT SECTION – More impressive & accessible
+        ============================================================ */
         #contact {
             background: var(--bg-secondary);
             position: relative;
@@ -874,6 +874,13 @@
         textarea.field {
             resize: vertical;
             min-height: 120px;
+        }
+
+        .counter {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+            text-align: right;
         }
 
         /* --- Theme-aware reCAPTCHA --- */
@@ -1420,22 +1427,51 @@
                             <form id="contactForm" method="POST" novalidate>
                                 <div class="form-group">
                                     <label for="form-name">Your Name</label>
-                                    <input type="text" id="form-name" name="name" class="field" placeholder="John Doe" required>
+                                    <input
+                                    type="text"
+                                    id="form-name"
+                                    name="name"
+                                    class="field"
+                                    placeholder="John Doe"
+                                    required
+                                    maxlength="40">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="form-email">Email Address</label>
-                                    <input type="email" id="form-email" name="email" class="field" placeholder="john@example.com" required>
+                                    <input
+                                    type="email"
+                                    id="form-email"
+                                    name="email"
+                                    class="field"
+                                    placeholder="john@example.com"
+                                    required
+                                    maxlength="60">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="form-subject">Subject</label>
-                                    <input type="text" id="form-subject" name="subject" class="field" placeholder="How can we help?" required>
+                                    <input
+                                    type="text"
+                                    id="form-subject"
+                                    name="subject"
+                                    class="field"
+                                    placeholder="How can we help?"
+                                    required
+                                    maxlength="80">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="form-message">Message</label>
-                                    <textarea id="form-message" name="message" class="field" placeholder="Tell us about your archery journey…" required></textarea>
+                                    <textarea 
+                                    id="form-message" 
+                                    name="message" 
+                                    class="field" 
+                                    placeholder="Tell us about your archery journey…" 
+                                    required
+                                    maxlength="300"
+                                    ></textarea>
+                                    <div id="msg-counter" class="counter">0 / 300</div>
                                 </div>
 
                                 <!-- reCAPTCHA Widget -->
@@ -1735,7 +1771,19 @@
             // We'll also handle theme switching for reCAPTCHA in toggleTheme().
 
             // ============================================================
-            // 9. ESC key closes nav
+            // 9. Text Form Counter
+            // ============================================================
+            const msg = document.getElementById("form-message");
+            const counter = document.getElementById("msg-counter");
+
+            counter.textContent = "0 / 300";
+
+            msg.addEventListener("input", () => {
+            counter.textContent = `${msg.value.length} / 300`;
+            });
+
+            // ============================================================
+            // 10. ESC key closes nav
             // ============================================================
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && navLinks.classList.contains('open')) {
